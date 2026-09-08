@@ -258,7 +258,7 @@ export default function Reader() {
         <p className="panel-status">Decodificando…</p>
       )}
 
-      {decodeStatus === "error" && (
+            {decodeStatus === "error" && (
         <p className="panel-error">{decodeError}</p>
       )}
 
@@ -275,7 +275,7 @@ export default function Reader() {
       )}
 
       {debugImages.length > 0 && (
-        <div className="debug-gallery">
+                <div className="debug-gallery">
           <div className="debug-gallery-header">
             <p className="field-label">Fotos generadas por el pipeline</p>
             <button
@@ -287,7 +287,19 @@ export default function Reader() {
             </button>
           </div>
           <div className="debug-gallery-grid">
-            ...
+            {debugImages.map((img) => (
+              <figure className="debug-gallery-item" key={img.name}>
+                <img src={img.data} alt={img.name} />
+                <figcaption>{img.name}</figcaption>
+                <a
+                  className="btn btn-ghost debug-gallery-download"
+                  href={img.data}
+                  download={img.name}
+                >
+                  Descargar
+                </a>
+              </figure>
+            ))}
           </div>
         </div>
       )}
