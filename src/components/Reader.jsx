@@ -13,12 +13,11 @@ export default function Reader() {
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
   const fileInputRef = useRef(null);
+  const decodeAbortRef = useRef(null); // fetch de /decode en curso, si hay
 
   const [cameraStatus, setCameraStatus] = useState("idle");
   const [capturedImage, setCapturedImage] = useState(null);
 
-  // Estado de la decodificación contra el backend:
-  //   idle | decoding | done | error
   const [decodeStatus, setDecodeStatus] = useState("idle");
   const [decodedText, setDecodedText] = useState("");
   const [decodeError, setDecodeError] = useState("");
@@ -32,7 +31,8 @@ export default function Reader() {
   }, []);
 
   // Apenas hay una imagen capturada o subida, se manda a decodificar
-  // automáticamente contra el backend.
+  // automáticamente contra el backend. Si ya habia una decodificacion
+  // en curso (foto anterior), decodeImage la cancela antes de arrancar.
   useEffect(() => {
     if (capturedImage) {
       decodeImage(capturedImage);
@@ -119,7 +119,17 @@ export default function Reader() {
     event.target.value = "";
   }
 
-    async function decodeImage(dataUrl) {
+  async function decodeImage(dataUrl) {
+    // Si habia una decodificacion anterior en curso (fue mas lenta
+    // que el tiempo que tardo el usuario en tomar/subir otra foto),
+    // la cancelamos antes de arrancar esta -- asi su resultado nunca
+    // llega tarde a pisar el de la imagen actual en pantalla.
+    if (decodeAbortRef.current) {
+      decodeAbortRef.current.abort();
+    }
+    const controller = new AbortController();
+    decodeAbortRef.current = controller;
+
     setDecodeStatus("decoding");
     setDecodedText("");
     setDecodeError("");
@@ -133,6 +143,7 @@ export default function Reader() {
       const response = await fetch(`${API_BASE_URL}/decode`, {
         method: "POST",
         body: formData,
+        signal: controller.signal,
       });
 
       const data = await response.json();
@@ -152,6 +163,11 @@ export default function Reader() {
       setDecodedText(data.text);
       setDecodeStatus("done");
     } catch (error) {
+      // Si el error es porque nosotros mismos abortamos este fetch
+      // (llego una imagen nueva antes de que terminara), no pisamos
+      // el estado con un error falso -- salimos en silencio.
+      if (error.name === "AbortError") return;
+
       setDecodeError(
         error.message || "No se pudo conectar con el servidor de decodificación."
       );
@@ -268,7 +284,7 @@ export default function Reader() {
         <p className="panel-status">Decodificando…</p>
       )}
 
-            {decodeStatus === "error" && (
+      {decodeStatus === "error" && (
         <p className="panel-error">{decodeError}</p>
       )}
 
