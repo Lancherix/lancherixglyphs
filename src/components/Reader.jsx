@@ -159,6 +159,17 @@ export default function Reader() {
     }
   }
 
+  function downloadAllDebugImages() {
+    debugImages.forEach((img) => {
+      const link = document.createElement("a");
+      link.href = img.data;
+      link.download = img.name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+  }
+
   return (
     <div className="panel">
       <p className="panel-label">Leer un código</p>
@@ -265,14 +276,18 @@ export default function Reader() {
 
       {debugImages.length > 0 && (
         <div className="debug-gallery">
-          <p className="field-label">Fotos generadas por el pipeline</p>
+          <div className="debug-gallery-header">
+            <p className="field-label">Fotos generadas por el pipeline</p>
+            <button
+              className="btn btn-ghost"
+              onClick={downloadAllDebugImages}
+              type="button"
+            >
+              Descargar todas
+            </button>
+          </div>
           <div className="debug-gallery-grid">
-            {debugImages.map((img) => (
-              <figure className="debug-gallery-item" key={img.name}>
-                <img src={img.data} alt={img.name} />
-                <figcaption>{img.name}</figcaption>
-              </figure>
-            ))}
+            ...
           </div>
         </div>
       )}
