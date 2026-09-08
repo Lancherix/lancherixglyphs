@@ -4,6 +4,7 @@ import Generator from "./components/Generator";
 import CornerMark from "./components/CornerMark";
 import { API_BASE_URL } from "./config";
 import "./App.css";
+import symbol from './assets/symbolBlue.png';
 
 // Render (free tier) duerme el backend tras inactividad; el primer
 // request tras eso puede demorar bastante (cold start). En vez de
@@ -12,8 +13,6 @@ import "./App.css";
 // mostramos el logo hasta que el servidor conteste.
 const HEALTH_CHECK_INTERVAL_MS = 2000;
 const HEALTH_CHECK_TIMEOUT_MS = 5000;
-
-import symbol from './assets/symbolBlue.png';
 
 export default function App() {
   const [tab, setTab] = useState("reader");
