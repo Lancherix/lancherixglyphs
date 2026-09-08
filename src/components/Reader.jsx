@@ -22,6 +22,7 @@ export default function Reader() {
   const [decodeStatus, setDecodeStatus] = useState("idle");
   const [decodedText, setDecodedText] = useState("");
   const [decodeError, setDecodeError] = useState("");
+  const [debugImages, setDebugImages] = useState([]);
 
   useEffect(() => {
     startCamera();
@@ -88,6 +89,7 @@ export default function Reader() {
     setDecodeStatus("idle");
     setDecodedText("");
     setDecodeError("");
+    setDebugImages([]);
     startCamera();
   }
 
@@ -107,10 +109,11 @@ export default function Reader() {
     event.target.value = "";
   }
 
-  async function decodeImage(dataUrl) {
+    async function decodeImage(dataUrl) {
     setDecodeStatus("decoding");
     setDecodedText("");
     setDecodeError("");
+    setDebugImages([]);
 
     try {
       const blob = await (await fetch(dataUrl)).blob();
@@ -123,6 +126,10 @@ export default function Reader() {
       });
 
       const data = await response.json();
+
+      // Las fotos de debug se guardan aunque haya habido un error,
+      // asi el usuario puede ver hasta donde llego el pipeline.
+      setDebugImages(data.images || []);
 
       if (!response.ok || data.error) {
         setDecodeError(
@@ -252,6 +259,20 @@ export default function Reader() {
             <button className="btn btn-ghost" onClick={copyDecodedText} type="button">
               Copiar
             </button>
+          </div>
+        </div>
+      )}
+
+      {debugImages.length > 0 && (
+        <div className="debug-gallery">
+          <p className="field-label">Fotos generadas por el pipeline</p>
+          <div className="debug-gallery-grid">
+            {debugImages.map((img) => (
+              <figure className="debug-gallery-item" key={img.name}>
+                <img src={img.data} alt={img.name} />
+                <figcaption>{img.name}</figcaption>
+              </figure>
+            ))}
           </div>
         </div>
       )}

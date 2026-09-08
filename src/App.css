@@ -275,6 +275,44 @@ textarea {
   margin: 0.35rem 0 0.5rem;
 }
 
+.debug-gallery {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color, #e2e2e2);
+}
+
+.debug-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.debug-gallery-item {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.debug-gallery-item img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--border-color, #e2e2e2);
+  background: #f3f3f3;
+  cursor: zoom-in;
+}
+
+.debug-gallery-item figcaption {
+  font-size: 0.7rem;
+  color: var(--text-muted, #767676);
+  text-align: center;
+  word-break: break-all;
+  line-height: 1.2;
+}
 
 /* ---------- reduced motion ---------- */
 
