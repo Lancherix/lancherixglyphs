@@ -23,6 +23,7 @@ export default function Reader() {
   const [decodedText, setDecodedText] = useState("");
   const [decodeError, setDecodeError] = useState("");
   const [debugImages, setDebugImages] = useState([]);
+  const [zoomedImage, setZoomedImage] = useState(null);
 
   useEffect(() => {
     startCamera();
@@ -38,6 +39,15 @@ export default function Reader() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [capturedImage]);
+
+  useEffect(() => {
+    if (!zoomedImage) return;
+    function handleKeyDown(event) {
+      if (event.key === "Escape") setZoomedImage(null);
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [zoomedImage]);
 
   async function startCamera() {
     if (!navigator.mediaDevices?.getUserMedia) {
@@ -275,7 +285,7 @@ export default function Reader() {
       )}
 
       {debugImages.length > 0 && (
-                <div className="debug-gallery">
+        <div className="debug-gallery">
           <div className="debug-gallery-header">
             <p className="field-label">Fotos generadas por el pipeline</p>
             <button
@@ -289,7 +299,11 @@ export default function Reader() {
           <div className="debug-gallery-grid">
             {debugImages.map((img) => (
               <figure className="debug-gallery-item" key={img.name}>
-                <img src={img.data} alt={img.name} />
+                <img
+                  src={img.data}
+                  alt={img.name}
+                  onClick={() => setZoomedImage(img)}
+                />
                 <figcaption>{img.name}</figcaption>
                 <a
                   className="btn btn-ghost debug-gallery-download"
@@ -301,6 +315,31 @@ export default function Reader() {
               </figure>
             ))}
           </div>
+        </div>
+      )}
+
+      {zoomedImage && (
+        <div
+          className="lightbox-overlay"
+          onClick={() => setZoomedImage(null)}
+          role="button"
+          tabIndex={-1}
+        >
+          <button
+            className="lightbox-close"
+            onClick={() => setZoomedImage(null)}
+            type="button"
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+          <img
+            src={zoomedImage.data}
+            alt={zoomedImage.name}
+            className="lightbox-image"
+            onClick={(event) => event.stopPropagation()}
+          />
+          <p className="lightbox-caption">{zoomedImage.name}</p>
         </div>
       )}
 
