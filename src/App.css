@@ -1,38 +1,298 @@
-.App {
-  text-align: center;
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap");
+
+:root {
+  --bg: #ffffff;
+  --surface: #f3f4f2;
+  --ink: #14161a;
+  --muted: #6b7078;
+  --line: #e3e5e3;
+  --accent: #2451ff;
+  --accent-ink: #ffffff;
+  --danger: #c8442c;
+
+  --radius: 10px;
+  --font-ui: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+body {
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea {
+  font-family: inherit;
+}
+
+.app {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  max-width: 560px;
+  margin: 0 auto;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ---------- header ---------- */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.1rem 1.25rem 0.6rem;
+  color: var(--ink);
+}
+
+.corner-mark {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.wordmark {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- tabs ---------- */
+
+.tab-bar {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+  padding: 0 1.25rem;
+  gap: 1.5rem;
+}
+
+.tab {
+  appearance: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.85rem 0.1rem;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.tab-active {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- main / panel ---------- */
+
+.app-main {
+  flex: 1;
+  padding: 1.5rem 1.25rem 2rem;
+  display: flex;
+}
+
+.panel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-label {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 0 0 0.9rem;
+}
+
+/* ---------- reader: camera ---------- */
+
+.camera-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.camera-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.camera-message {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  gap: 0.7rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1.5rem;
 }
 
-.App-link {
-  color: #61dafb;
+.camera-message p {
+  margin: 0;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* ---------- generator: text input ---------- */
+
+.field-label {
+  font-size: 0.92rem;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+
+.text-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.85rem 0.9rem;
+  font-size: 1rem;
+  color: var(--ink);
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.45;
+}
+
+.text-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.char-count {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--muted);
+  margin: 0.5rem 0 0;
+}
+
+.char-count-low {
+  color: var(--danger);
+}
+
+/* ---------- buttons ---------- */
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1.25rem;
+}
+
+.btn {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius);
+  padding: 0.8rem 1.3rem;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  flex: 1;
+  min-width: 140px;
+}
+
+.btn-primary:not(:disabled):active {
+  opacity: 0.85;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+.btn-ghost:active {
+  background: var(--surface);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.panel-error {
+  color: #c0392b;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.panel-status {
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.result-box {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.result-text {
+  font-size: 1rem;
+  word-break: break-word;
+  margin: 0.35rem 0 0.5rem;
+}
+
+
+/* ---------- reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .tab,
+  .btn {
+    transition: none;
   }
-  to {
-    transform: rotate(360deg);
+}
+
+/* ---------- desktop refinement ---------- */
+
+@media (min-width: 640px) {
+  .app {
+    padding-top: 2rem;
+  }
+
+  .camera-frame {
+    aspect-ratio: 4 / 3;
   }
 }
