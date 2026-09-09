@@ -14,6 +14,7 @@ export default function Reader() {
   const streamRef = useRef(null);
   const fileInputRef = useRef(null);
   const decodeAbortRef = useRef(null); // fetch de /decode en curso, si hay
+  const [logs, setLogs] = useState("");
 
   const [cameraStatus, setCameraStatus] = useState("idle");
   const [capturedImage, setCapturedImage] = useState(null);
@@ -151,6 +152,7 @@ export default function Reader() {
       // Las fotos de debug se guardan aunque haya habido un error,
       // asi el usuario puede ver hasta donde llego el pipeline.
       setDebugImages(data.images || []);
+      setLogs(data.logs || "");
 
       if (!response.ok || data.error) {
         setDecodeError(
@@ -278,6 +280,16 @@ export default function Reader() {
           onChange={handleUpload}
           hidden
         />
+
+        {capturedImage && (
+          <a
+            className="btn btn-ghost"
+            href={capturedImage}
+            download="lancherix-original.png"
+          >
+            Descargar foto original
+          </a>
+        )}
       </div>
 
       {decodeStatus === "decoding" && (
@@ -331,6 +343,22 @@ export default function Reader() {
               </figure>
             ))}
           </div>
+        </div>
+      )}
+
+      {logs && (
+        <div className="debug-gallery">
+          <div className="debug-gallery-header">
+            <p className="field-label">Proceso / logs</p>
+            <button
+              className="btn btn-ghost"
+              onClick={() => navigator.clipboard.writeText(logs)}
+              type="button"
+            >
+              Copiar
+            </button>
+          </div>
+          <pre className="log-output">{logs}</pre>
         </div>
       )}
 
